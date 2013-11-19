@@ -1,7 +1,7 @@
 EXES = brute_force
 
 all: $(EXES)
-	gcc -Wall -O3 -o $@ $^ $(LIBS)
+	mpicc -Wall -O3 -o $@ $^ $(LIBS)
 
 clean:
 	rm -f $(EXES)
