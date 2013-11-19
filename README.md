@@ -14,5 +14,5 @@ How to run convert_md5_txt.cpp
 1. Install openssl if needed - sudo apt-get install openssl
 2. Install libsll  if needed -sudo apt-get install libssl-dev
 3. make
-4. make run <filename>
+4. make convert <filename>
 
