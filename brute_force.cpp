@@ -5,12 +5,10 @@
 //#include "mpi.h"     /* For MPI functions, etc */ 
 #include "md5.h"
 
-
-
-void hexhash(unsigned char *str, char *hash); // Gets the strings hash value
-// void forceCrack(char* hash, int maxPassLength);
 int forceCrack(char* hash, int maxPassLength, int myRank); // Cracks the password
 void checkPass(char* hash, char* string1); // Compares two hashes
+
+MD5 md5; // Yes, this is a global variable
 
 int main(int argc, char **argv)
 {
@@ -22,45 +20,26 @@ int main(int argc, char **argv)
 //    MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
 
 
-	int maxPassLength = 3;
-	if (maxPassLength > 10) maxPassLength = 10; // Caps brute force at length 10 passwords
+	int maxPassLength = 5; // Will not check passwords longer than this
 	char hash[33];
 
 	if (argc < 2) {
 		if (myRank == 0)
-			printf("Please enter the password hash in argv[1]\n");
+			printf("Please enter the password hash in argv[1], not the password we are checking against\n");
 //      MPI_Finalize();
 		return -1;
 	}
-
-	printf("Hash to crack: %s\n", argv[1]);
-    hash = argv[1];
-	forceCrack(hash, maxPassLength, myRank); // This does the brute force
+    sprintf(hash, "%s",argv[1]);
+    forceCrack(hash, maxPassLength, myRank); // This does the brute force
 
 //	MPI_Finalize();
 	return 0;
 }
 
-void hexhash(unsigned char *str, char *hash)
-{
-	struct MD5Context mdc;
-	unsigned char dg[16];
-	MD5Init(&mdc);
-	MD5Update(&mdc, str, strlen(str));
-	MD5Final(dg, &mdc);
-	
-	sprintf(hash, "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x", 
-		dg[0], dg[1], dg[2],
- 		dg[3], dg[4], dg[5], dg[6], dg[7], dg[8], dg[9], dg[10], dg[11],	
- 		dg[12], dg[13], dg[14], dg[15]);
-}
-
 int forceCrack(char* hash, int maxPassLength, int myRank)
 {
-	char* alphanum =							// Character set to check passwords of
-		"abcdefghijklmnopqrstuvwxyz"
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		"0123456789";
+	char* alphanum = 							// Character set to check passwords of
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	int alphanumLength = strlen(alphanum); 		// 62
 	int spot[maxPassLength]; 					// Gives you the index into alphanum you should have for each character place
 	char str[maxPassLength];					// Test string
@@ -107,9 +86,9 @@ void checkPass(char* hash, char* tempString)
 	char testHash[33];
 	int k, l;
 	bool foundPass = false;
+    sprintf(testHash, "%s", md5.digestString(tempString));
 
 //	printf("Testing: %s\n", tempString);	// Prints the value we are testing
-	hexhash(tempString, testHash);			// Hashes string
 	for (k = 0; k < strlen(testHash); k++) {// Corrects spaces TODO: Fix zero problem
 		if (testHash[k] == ' ')
 			testHash[k] = '0';
@@ -127,4 +106,4 @@ void checkPass(char* hash, char* tempString)
 		printf("The password is: %s\n", tempString);
 		exit(0);
 	}
-}
+} 
