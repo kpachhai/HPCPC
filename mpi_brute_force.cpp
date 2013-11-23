@@ -55,8 +55,8 @@ int forceCrack(char* hash, int maxPassLength, int myRank)
 
 
 	if (myRank == 0)  {
-		//printf("alphanumLength: %d\n", alphanumLength);
-		//printf("maxPassLength: %d\n", maxPassLength);
+		printf("alphanumLength: %d\n", alphanumLength);
+		printf("maxPassLength: %d\n", maxPassLength);
 	}
 	while (search) {
 		for(j = 0; j < maxPassLength; j++) 				// For each character in the string
@@ -111,7 +111,7 @@ void checkPass(char* hash, char* tempString)
 		}
 	}
 	if (foundPass) {
-		printf("The password is %s\n", tempString);
+		printf("The password is: %s\n", tempString);
 		exit(0);
 	}
 } 
