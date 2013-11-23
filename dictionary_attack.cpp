@@ -32,14 +32,13 @@ int main(int argc, char ** argv) {
         if(md5.compare(it->second) == 0) {
             match = it->first;
             found = true;
-            cout << "Hash matched!!" << endl;
             cout << "The password is " << match << endl;
             break;
         }
     }
 
     if(!found)
-        cout << "You suck. Couldn't match the password in the dictionary" << endl;
+        cout << "Couldn't match the password in the dictionary" << endl;
 
     return 0;
 
