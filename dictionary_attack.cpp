@@ -1,45 +1,56 @@
-#include <iostream>
 #include <string>
+#include <iostream>
 #include <fstream>
-#include <map>
 #include <sstream>
+#include <cstring>
 
 using namespace std;
 
+struct hashes
+{
+    char * hash;
+    char * pass;
+};
+
 int main(int argc, char ** argv) {
+    hashes * record = new hashes[3106];        
+    int i = 0;
     ifstream file; 
     string line;
-    map<string,string> dictionary;
-    map<string,string>::iterator it;
-    string md5 = argv[1];
-    string match;
+    char * md5 = argv[1];
     bool found = false;
-
-    file.open("passlist/wordsforsimpletest.txt");
     
-    for(int i = 0; i < 17; i++) {
-        while(getline(file, line)) {
-            string key,value;
-            istringstream liness(line);
-            getline(liness, key, ',');
-            getline(liness, value, ',');
-            dictionary[key] = value;
-        }
+    file.open("passlist/wordsforsimpletest.txt");
+
+    while(getline(file, line)) {
+        string key,value;
+        istringstream liness(line);
+        getline(liness, key, ',');
+        getline(liness, value, ',');
+            
+        record[i].pass = new char[key.size() + 1];
+        copy(key.begin(), key.end(), record[i].pass);
+        record[i].pass[key.size()] = '\0';
+
+        record[i].hash = new char[value.size() + 1];
+        copy(value.begin(), value.end(), record[i].hash);
+        record[i].hash[value.size()] = '\0';          
+        i++;
     }
     file.close();
-
-    for(map<string,string>::iterator it=dictionary.begin(); it!=dictionary.end();++it) {
-        if(md5.compare(it->second) == 0) {
-            match = it->first;
+    
+    for(i = 0; i < 17; i++) {
+        if(strcmp(record[i].hash, md5) == 0) {
             found = true;
-            cout << "The password is " << match << endl;
+            cout << "The password is " << record[i].pass << endl;
             break;
         }
     }
-
+    
     if(!found)
         cout << "Couldn't match the password in the dictionary" << endl;
-
+    
     return 0;
-
+    
 }
+
