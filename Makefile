@@ -1,4 +1,3 @@
-EXES = brute_force
 F = passlist/simplewords.txt
 A = passlist/test.txt
 B = dictionary_attack
@@ -9,11 +8,11 @@ E = d-a-leveldb
 
 GCC = g++
 
-all: $(EXES)
-	$(GCC) -Wall -O3 -o $@ $^
+serial_brute_force:
+	$(GCC) serial_brute_force.cpp -O3 -o $@
 
 mpi_brute_force:
-	mpicc mpi_brute_force.cpp  -o $@
+	mpic++ mpi_brute_force.cpp -o $@
 
 dic_attack_basic:
 	$(GCC) -O3 -o $(B) dictionary_attack.cpp
@@ -28,8 +27,7 @@ test:
 	python performance.py $(A) $(B) $(C)
 
 clean:
-	rm -f $(EXES)
-	rm -f mpi_brute_force d-a-leveldb d-a-leveldb-create-db dictionary_attack 
+	rm -f serial_brute_force mpi_brute_force d-a-leveldb d-a-leveldb-create-db dictionary_attack 
 
 love:
 	@echo "not war"

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-//#include "mpi.h"     /* For MPI functions, etc */ 
+#include "mpi.h"     /* For MPI functions, etc */ 
 #include "md5.h"
 
 #define HASH_LENGTH 33
@@ -10,16 +10,16 @@
 int forceCrack(char* hash, int maxPassLength, int myRank); // Cracks the password
 void checkPass(char* hash, char* string1); // Compares two hashes
 
-MD5 md5; // Yes, these are a global variable
+MD5 md5; // Global variable 
 
 int main(int argc, char **argv)
 {
-//    MPI_Init(&argc, &argv);
+    MPI_Init(&argc, &argv);
 
-//    int comm_sz;
-    int myRank = 0; // Change once using MPI
-//    MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
-//    MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+    int comm_sz;
+    int myRank;
+    MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
 
 
 	int maxPassLength = 5; // Will not check passwords longer than this
@@ -28,13 +28,13 @@ int main(int argc, char **argv)
 	if (argc < 2) {
 		if (myRank == 0)
 			printf("Please enter the password hash in argv[1], not the password we are checking against\n");
-//      MPI_Finalize();
+      MPI_Finalize();
 		return -1;
 	}
     sprintf(hash, "%s",argv[1]);
     forceCrack(hash, maxPassLength, myRank); // This does the brute force
 
-//	MPI_Finalize();
+	MPI_Finalize();
 	return 0;
 }
 
@@ -54,11 +54,11 @@ int forceCrack(char* hash, int maxPassLength, int myRank)
 	spot[0] = 0;
 
 
-	if (myRank == 0)  {
+/*	if (myRank == 0)  {
 		printf("alphanumLength: %d\n", alphanumLength);
 		printf("maxPassLength: %d\n", maxPassLength);
 	}
-	while (search) {
+*/	while (search) {
 		for(j = 0; j < maxPassLength; j++) 				// For each character in the string
 		{
 			if(spot[j] == alphanumLength)				// If we're at the last character
@@ -90,7 +90,7 @@ int forceCrack(char* hash, int maxPassLength, int myRank)
     {
         printf("Could not find matching hash for words of length %d or less\n", maxPassLength);
     }
-//    MPI_Finalize();
+    MPI_Finalize();
 	return 0;
 }
 
