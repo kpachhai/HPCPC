@@ -66,8 +66,9 @@ void forceCrack(char* hash, int maxPassLength, int myRank, int numOfProcs)
     printf("Processor: %d, Start letter: %d, End letter: %d\n", myRank, startLetter, endLetter); // Debugging info
 
     if (myRank == 0) // Processor 0 will check all possibilities of length less than maxPassLength in addition to 
-                     // its share of maxPassLength size passwords. This is up to a ~50% increase in time for proc 0 in the rare case
-                     // that the password is maxPassLength long and ends a letter that falls between startLetter and endLetter for proc 0.
+                     // its share of maxPassLength size passwords. This is up to a ~50% increase in time for proc 0 in the case
+                     // that the password is maxPassLength long and ends a letter that falls between startLetter and endLetter for proc 0
+                     // or the password does not exist within maxPassLength.
     {
         for (i = 0; i < maxPassLength; i++)		// Set initial values for arrays
         {
