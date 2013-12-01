@@ -7,7 +7,7 @@ C = 10
 D = d-a-leveldb-create-db
 E = d-a-leveldb
 
-P = 2
+P = 1
 H = 1a1dc91c907325c69271ddf0c944bc72
 M = 5
 
@@ -32,7 +32,7 @@ dic_attack_db_exec:
 	$(GCC) -O3 -o $(E) d-a-leveldb.cpp leveldb/libleveldb.a -lpthread -I leveldb/include
 
 test:
-	python performance.py $(A) $(B) $(C)
+	python performance.py $(A) $(B) $(C) $(P)
 
 clean:
 	rm -f $(EXES)
