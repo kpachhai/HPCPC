@@ -135,6 +135,7 @@ void checkPass(char* hash, char* tempString, int myRank)
 	}
 	if (foundPass) {
 		printf("Processor %d found the password: %s\n", myRank, tempString);
+        MPI_Abort(MPI_COMM_WORLD, 14);
         MPI_Finalize();
 		exit(0);
 	}
