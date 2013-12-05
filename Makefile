@@ -8,22 +8,14 @@ D = d-a-leveldb-create-db
 E = d-a-leveldb
 F = d-a-leveldb-mpi
 
-<<<<<<< HEAD
 G = passlist/wordsforsimpletest.txt
 J = passlist/hashFileToTest.txt
 I = passlist/convertedHash.txt
 
-H = 1a1dc91c907325c69271ddf0c944bc72
-M = 5
-
-P = 16
-HASH = 202cb962ac59075b964b07152d234b70
-=======
 P = 1
 H = 1a1dc91c907325c69271ddf0c944bc72
 M = 5
 
->>>>>>> 7eb68a6fb000e5b66e299a04fca3adee3da4bb49
 GCC = g++
 
 all: $(EXES)
