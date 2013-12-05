@@ -29,7 +29,7 @@ int main(int argc, char ** argv) {
         istringstream liness(line);
         getline(liness, pass, ',');
         getline(liness, hash, ',');
-            
+          
         leveldb::Slice s = hash;
         leveldb::Slice t = pass;    
         db->Put(woptions,s,t);   

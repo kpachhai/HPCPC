@@ -11,7 +11,6 @@ using namespace std;
 int main(int argc, char ** argv) {
     string line;
     string hashValue = argv[1];
-    bool found = false;
 
     leveldb::DB *db;
     leveldb::Options options;
@@ -21,23 +20,11 @@ int main(int argc, char ** argv) {
 
     leveldb::ReadOptions roptions;
 
-    leveldb::Iterator* it = db->NewIterator(roptions);
-    for(it->SeekToFirst(); it->Valid(); it->Next()) {
-        leveldb::Slice sD = it->key();
-        leveldb::Slice tD = it->value();
-        string key_str = sD.ToString();
-        string val_str = tD.ToString();
-        if(hashValue.compare(key_str) == 0) {
-            found = true;
-            cout << "The password is " << val_str << endl;
-            break;
-        }
-    }
-    delete it;
-    delete db;
-    
-    if(!found)
-        cout << "Couldn't match the password in the dictionary" << endl;
+    string password;
+    leveldb::Status s = db->Get(roptions, hashValue, &password);
+    if(s.ok()) cout << "The password is " << password << endl;
+    else cout << "Couldn't match the password in the dictionary" << endl;
+    delete db;   
     
     return 0;
 }

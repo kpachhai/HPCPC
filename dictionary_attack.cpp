@@ -2,7 +2,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
 #include <cstring>
+#include <ostream>
 
 using namespace std;
 
@@ -12,16 +14,16 @@ struct hashes
     char * pass;
 };
 
-int main(int argc, char ** argv) {
-    hashes * record = new hashes[3106];        
-    int i = 0;
-    ifstream file; 
-    string line;
-    char * md5 = argv[1];
-    bool found = false;
-    
-    file.open("passlist/wordsforsimpletest.txt");
+void readPassFile(hashes *, char *);
+void readHashFile(hashes *, char *);
+void writeFile(hashes *, char *, int);
 
+void readPassFile(hashes * record, char * fileName) {
+	int i = 0;
+	ifstream file;
+	string line;
+	
+    file.open(fileName); 	//passlist/wordsforsimpletest.txt
     while(getline(file, line)) {
         string key,value;
         istringstream liness(line);
@@ -38,17 +40,67 @@ int main(int argc, char ** argv) {
         i++;
     }
     file.close();
+}
+
+void readHashFile(hashes * hToCheck, char * fileName ) {
+    ifstream file; 
+    string line;
+    int i = 0;
     
-    for(i = 0; i < 17; i++) {
-        if(strcmp(record[i].hash, md5) == 0) {
-            found = true;
-            cout << "The password is " << record[i].pass << endl;
-            break;
+    file.open(fileName);	//passlist/hashFileToTest.txt
+    while(getline(file, line)) {
+        string key = "NOT FOUND";
+		string value = line;            
+		
+        hToCheck[i].pass = new char[key.size() + 1];
+        copy(key.begin(), key.end(), hToCheck[i].pass);
+        hToCheck[i].pass[key.size()] = '\0';
+        
+
+        hToCheck[i].hash = new char[value.size() + 1];
+        copy(value.begin(), value.end(), hToCheck[i].hash);
+        hToCheck[i].hash[value.size()] = '\0';   
+        i++;       
+    }
+    file.close();    
+}
+
+void writeFile(hashes * hToCheck, char * fileName, int nLinesHFile) { 
+	int i;
+    ofstream  fileToWriteTo;
+    fileToWriteTo.open(fileName); //passlist/convertedHash.txt    
+    for(i = 0; i < nLinesHFile; i++) {
+    	if(strcmp(hToCheck[i].pass, "NOT FOUND") != 0) {
+    		fileToWriteTo << hToCheck[i].pass << ", " << hToCheck[i].hash << endl;
+    	}
+    }
+    fileToWriteTo.close();
+}
+
+int main(int argc, char ** argv) {
+ 	char * PFile = argv[1];
+ 	int nLinesPFile = atoi(argv[2]);
+ 	char * HFile = argv[3];
+ 	int nLinesHFile = atoi(argv[4]);
+ 	char * outputFile = argv[5];
+
+    hashes * record = new hashes[nLinesPFile];
+    hashes * hToCheck = new hashes[nLinesHFile];
+    int i, j;
+    
+    readPassFile(record, PFile);
+    readHashFile(hToCheck, HFile);
+    
+    for(i = 0; i < nLinesPFile; i++) {
+        if(strcmp(record[i].hash, hToCheck[i].hash) == 0) {
+        	string password = record[i].pass;
+     		hToCheck[i].pass = new char[password.size() + 1];
+        	copy(password.begin(), password.end(), hToCheck[i].pass);
+        	hToCheck[i].pass[password.size()] = '\0';
         }
     }
-    
-    if(!found)
-        cout << "Couldn't match the password in the dictionary" << endl;
+
+	writeFile(hToCheck, outputFile, nLinesHFile);
     
     return 0;
     
