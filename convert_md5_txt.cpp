@@ -7,14 +7,10 @@
 using namespace std;
 
 int main(int argc, char** argv)
-{
-        if(argc != 2)
-        {
-                cout << "Incorrect parameters" << endl;
-                return -1;
-        }
-
+{	
         string fileName = argv[1];
+	char * outputFileName = argv[2];
+
         unsigned char digest[16];
         MD5_CTX ctx;
         
@@ -24,7 +20,7 @@ int main(int argc, char** argv)
         string password;        
 
         myfile.open(fileName.c_str());
-        outputFile.open("passlist/hashlist.txt");        
+        outputFile.open(outputFileName);        
         if(myfile.is_open())
         {
                 while( getline(myfile,password) )
