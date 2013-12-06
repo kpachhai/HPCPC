@@ -10,6 +10,7 @@ E = d-a-leveldb
 G = passlist/wordsforsimpletest.txt
 J = passlist/hashFileToTest.txt
 I = passlist/convertedHash.txt
+II = passlist/convertedHashLeveldb.txt
 
 P = 1
 H = 1a1dc91c907325c69271ddf0c944bc72
@@ -35,13 +36,17 @@ dic_attack_create_db:
 
 dic_attack_db_exec:
 	$(GCC) -O3 -o $(E) d-a-leveldb.cpp leveldb/libleveldb.a -lpthread -I leveldb/include
+	./d-a-leveldb $(J) 16 $(II)
+
+convert:
+	$(GCC) convert_md5_txt.cpp -o convert -lcrypto -lssl
 	
 test:
 	python performance.py $(A) $(B) $(C) $(P)
 
 clean:
 	rm -f $(EXES)
-	rm -f mpi_brute_force d-a-leveldb d-a-leveldb-create-db dictionary_attack d-a-leveldb-mpi 
+	rm -f mpi_brute_force d-a-leveldb d-a-leveldb-create-db dictionary_attack d-a-leveldb-mpi convert 
 
 love:
 	@echo "not war"
