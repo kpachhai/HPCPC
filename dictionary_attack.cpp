@@ -99,12 +99,21 @@ int performMainComputation(hashes * record, hashes * hToCheck, hashes * result, 
     return indexStruct;
 }
 
+void printBenchmark(int nLinesHFile, double readTime, int nPassCracked, double execTime, double writeTime) {
+    cout << endl;
+    cout << "Read time of the file with " << nLinesHFile << " pass hashes = " << readTime << " seconds" << endl << endl;
+    cout << "Total number of passwords cracked = " << nPassCracked << endl;
+    cout << "Total execution time for the main computation = " << execTime << " seconds" << endl;
+    cout << endl;
+    cout << "Write time of the output file = " << writeTime << " seconds" << endl << endl;
+}
+
 int main(int argc, char ** argv) {
- 	char * PFile = argv[1];
- 	int nLinesPFile = atoi(argv[2]);
- 	char * HFile = argv[3];
- 	int nLinesHFile = atoi(argv[4]);
- 	char * outputFile = argv[5];
+    char * PFile = argv[1];
+    int nLinesPFile = atoi(argv[2]);
+    char * HFile = argv[3];
+    int nLinesHFile = atoi(argv[4]);
+    char * outputFile = argv[5];
 
     hashes * record = new hashes[nLinesPFile];
     hashes * hToCheck = new hashes[nLinesHFile];
@@ -114,8 +123,7 @@ int main(int argc, char ** argv) {
     readPassFile(record, PFile);
     readHashFile(hToCheck, HFile);
     double readTime = get_walltime() - startReadTime;
-    
- 
+     
     double startExecTime = get_walltime();
     int nPassCracked = performMainComputation(record, hToCheck, result, nLinesPFile, nLinesHFile);
     double execTime = get_walltime() - startExecTime;
@@ -124,12 +132,7 @@ int main(int argc, char ** argv) {
     writeFile(result, outputFile, nPassCracked);
     double writeTime = get_walltime() - startWriteTime;
  
-    cout << endl;
-    cout << "Read time of the file with " << nLinesHFile << " pass hashes = " << readTime << " seconds" << endl << endl;
-    cout << "Total number of passwords cracked = " << nPassCracked << endl;
-    cout << "Total execution time for the main computation = " << execTime << " seconds" << endl;
-    cout << endl;
-    cout << "Write time of the output file = " << writeTime << " seconds" << endl << endl;
+    printBenchmark(nLinesHFile, readTime, nPassCracked, execTime, writeTime);
    
     return 0;
     
