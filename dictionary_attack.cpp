@@ -10,8 +10,8 @@ using namespace std;
 
 struct hashes
 {
-    char * hash;
-    char * pass;
+    string hash;
+    string pass;
 };
 
 void readPassFile(hashes *, char *);
@@ -30,13 +30,8 @@ void readPassFile(hashes * record, char * fileName) {
         getline(liness, key, ',');
         getline(liness, value, ',');
             
-        record[i].pass = new char[key.size() + 1];
-        copy(key.begin(), key.end(), record[i].pass);
-        record[i].pass[key.size()] = '\0';
-
-        record[i].hash = new char[value.size() + 1];
-        copy(value.begin(), value.end(), record[i].hash);
-        record[i].hash[value.size()] = '\0';          
+        record[i].pass = key;
+        record[i].hash = value;        
         i++;
     }
     file.close();
@@ -50,16 +45,11 @@ void readHashFile(hashes * hToCheck, char * fileName ) {
     file.open(fileName);	//passlist/hashFileToTest.txt
     while(getline(file, line)) {
         string key = "NOT FOUND";
-		string value = line;            
-		
-        hToCheck[i].pass = new char[key.size() + 1];
-        copy(key.begin(), key.end(), hToCheck[i].pass);
-        hToCheck[i].pass[key.size()] = '\0';
-        
+        hToCheck[i].pass = key;
 
-        hToCheck[i].hash = new char[value.size() + 1];
-        copy(value.begin(), value.end(), hToCheck[i].hash);
-        hToCheck[i].hash[value.size()] = '\0';   
+	string value = line;            
+        hToCheck[i].hash = value;        
+
         i++;       
     }
     file.close();    
@@ -70,7 +60,9 @@ void writeFile(hashes * hToCheck, char * fileName, int nLinesHFile) {
     ofstream  fileToWriteTo;
     fileToWriteTo.open(fileName); //passlist/convertedHash.txt    
     for(i = 0; i < nLinesHFile; i++) {
-    	if(strcmp(hToCheck[i].pass, "NOT FOUND") != 0) {
+ 	string notFound = "NOT FOUND";
+    	if(hToCheck[i].pass.compare(notFound) != 0) {
+		cout << hToCheck[i].pass << "," << hToCheck[i].hash << endl;
     		fileToWriteTo << hToCheck[i].pass << ", " << hToCheck[i].hash << endl;
     	}
     }
@@ -92,11 +84,8 @@ int main(int argc, char ** argv) {
     readHashFile(hToCheck, HFile);
     
     for(i = 0; i < nLinesPFile; i++) {
-        if(strcmp(record[i].hash, hToCheck[i].hash) == 0) {
-        	string password = record[i].pass;
-     		hToCheck[i].pass = new char[password.size() + 1];
-        	copy(password.begin(), password.end(), hToCheck[i].pass);
-        	hToCheck[i].pass[password.size()] = '\0';
+        if(record[i].hash.compare(hToCheck[i].hash) == 0) {
+	    hToCheck[i].pass = record[i].pass;
         }
     }
 
