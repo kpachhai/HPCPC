@@ -1,0 +1,17 @@
+SERIAL VERSION:
+Filename		Total passwords size			|   Trial 1   |   Trial 2  |
+elitehacker.txt		Total time for 895 password hashes 	|   0.013 s   |   0.013 s  |
+hak5.txt		Total time for 2351 password hashes 	|   0.027 s   |   0.031 s  |
+singles.org.txt		Total time for 12234 password hashes 	|   0.057 s   |   0.054 s  |
+english.txt		Total time for 394748 password hashes 	|   0.000 s   |   0.000 s  |
+facebook-firstnames.txt Total time for 4347667 password hashes  |   0.000 s   |   0.000 s  |
+rockyou.txt 		Total time for 14344391 password hashes |   0.000 s   |   0.000 s  |
+
+GPU VERSION:
+Filename		Total passwords size			|   Trial 1   |   Trial 2  |
+elitehacker.txt		Total time for 895 password hashes 	|   0.013 s   |   0.013 s  |
+hak5.txt		Total time for 2351 password hashes 	|   0.027 s   |   0.031 s  |
+singles.org.txt		Total time for 12234 password hashes 	|   0.057 s   |   0.054 s  |
+english.txt		Total time for 394748 password hashes 	|   0.000 s   |   0.000 s  |
+facebook-firstnames.txt Total time for 4347667 password hashes  |   0.000 s   |   0.000 s  |
+rockyou.txt 		Total time for 14344391 password hashes |   0.000 s   |   0.000 s |  
