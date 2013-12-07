@@ -28,9 +28,9 @@ void readHashFile(hashes *, char *);
 void writeFile(hashes *, char *, int);
 
 void readPassFile(hashes * record, char * fileName) {
-	int i = 0;
-	ifstream file;
-	string line;
+    int i = 0;
+    ifstream file;
+    string line;
 	
     file.open(fileName); 	//passlist/wordsforsimpletest.txt
     while(getline(file, line)) {
