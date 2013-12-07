@@ -8,9 +8,12 @@ D = d-a-leveldb-create-db
 E = d-a-leveldb
 
 G = passlist/wordsforsimpletest.txt
+GG = passlist/hashFileToTest.txt
 J = passlist/wordsfortestLeveldb.txt
+JJ = passlist/wordsfortestLeveldbGPU.txt
 I = passlist/convertedHash.txt
 II = passlist/convertedHashLeveldb.txt
+K = passlist/convertedHashLeveldbGPU.txt
 
 P = 1
 H = 1a1dc91c907325c69271ddf0c944bc72
@@ -29,7 +32,7 @@ run_mpi_brute:
 
 dic_attack_basic:
 	$(GCC) -O3 -o $(B) dictionary_attack.cpp
-	./dictionary_attack $(G) 16 $(J) 16 $(I)
+	./dictionary_attack $(G) 16 $(GG) 16 $(I)
 
 dic_attack_create_db:
 	$(GCC) -O3 -o $(D) d-a-leveldb-create-db.cpp leveldb/libleveldb.a -lpthread -I leveldb/include
@@ -40,6 +43,7 @@ dic_attack_db_exec:
 
 dic_attack_db_exec_gpu:
 	nvcc -O3 -o dic_attack_gpu d-a-leveldb-cuda.cu leveldb/libleveldb.a -lpthread -I leveldb/include
+	./dic_attack_gpu $(JJ) 895 $(K)
 
 convert:
 	$(GCC) convert_md5_txt.cpp -o convert -lcrypto -lssl
