@@ -13,8 +13,8 @@ I = passlist/convertedHash.txt
 II = passlist/convertedHashLeveldb.txt
 
 P = 1
-H = 1a1dc91c907325c69271ddf0c944bc72
-M = 5
+H = passlist/hashFileToTest.txt
+M = 4
 
 GCC = g++
 
