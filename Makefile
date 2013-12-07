@@ -8,7 +8,7 @@ D = d-a-leveldb-create-db
 E = d-a-leveldb
 
 G = passlist/wordsforsimpletest.txt
-J = passlist/hashFileToTest.txt
+J = passlist/wordsfortestLeveldb.txt
 I = passlist/convertedHash.txt
 II = passlist/convertedHashLeveldb.txt
 
@@ -36,10 +36,16 @@ dic_attack_create_db:
 
 dic_attack_db_exec:
 	$(GCC) -O3 -o $(E) d-a-leveldb.cpp leveldb/libleveldb.a -lpthread -I leveldb/include
-	./d-a-leveldb $(J) 16 $(II)
+	./d-a-leveldb $(J) 394748 $(II)
+
+dic_attack_db_exec_gpu:
+	nvcc -O3 -o dic_attack_gpu d-a-leveldb-cuda.cu leveldb/libleveldb.a -lpthread -I leveldb/include
 
 convert:
 	$(GCC) convert_md5_txt.cpp -o convert -lcrypto -lssl
+
+makehashes:
+	$(GCC) make_hashes_pass_files_for_test.cpp -o make_hashes -lcrypto -lssl
 	
 test:
 	python performance.py $(A) $(B) $(C) $(P)
