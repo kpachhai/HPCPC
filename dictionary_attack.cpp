@@ -44,7 +44,7 @@ void readHashFile(hashes * hToCheck, char * fileName ) {
     
     file.open(fileName);	//passlist/hashFileToTest.txt
     while(getline(file, line)) {
-        string key = "NOT FOUND";
+        string key = "";
         hToCheck[i].pass = key;
 
 	string value = line;            
@@ -55,18 +55,39 @@ void readHashFile(hashes * hToCheck, char * fileName ) {
     file.close();    
 }
 
-void writeFile(hashes * hToCheck, char * fileName, int nLinesHFile) { 
+void writeFile(hashes * result, char * fileName, int size) { 
 	int i;
     ofstream  fileToWriteTo;
     fileToWriteTo.open(fileName); //passlist/convertedHash.txt    
-    for(i = 0; i < nLinesHFile; i++) {
- 	string notFound = "NOT FOUND";
-    	if(hToCheck[i].pass.compare(notFound) != 0) {
-		cout << hToCheck[i].pass << "," << hToCheck[i].hash << endl;
-    		fileToWriteTo << hToCheck[i].pass << ", " << hToCheck[i].hash << endl;
-    	}
+    for(i = 0; i < size; i++) {
+    	fileToWriteTo << result[i].pass << ", " << result[i].hash << endl;
     }
     fileToWriteTo.close();
+}
+
+int performMainComputation(hashes * record, hashes * hToCheck, hashes * result, int nLinesPFile, int nLinesHFile) {
+    int i, j;
+    int row = nLinesPFile;
+    int col = nLinesHFile;
+
+    if(nLinesPFile < nLinesHFile) {
+	row = nLinesHFile;
+	col = nLinesPFile;
+    }
+
+    int indexStruct = 0;
+
+    for(i = 0; i < row; i++) {
+        for(j = 0; j < col; j++) {
+            if(record[i].hash.compare(hToCheck[j].hash) == 0) {
+		result[indexStruct].pass = record[i].pass;
+		result[indexStruct].hash = record[i].hash;
+		indexStruct++;
+            }
+	}
+    }
+
+    return indexStruct;
 }
 
 int main(int argc, char ** argv) {
@@ -78,18 +99,14 @@ int main(int argc, char ** argv) {
 
     hashes * record = new hashes[nLinesPFile];
     hashes * hToCheck = new hashes[nLinesHFile];
-    int i, j;
+    hashes * result = new hashes[nLinesHFile];
     
     readPassFile(record, PFile);
     readHashFile(hToCheck, HFile);
     
-    for(i = 0; i < nLinesPFile; i++) {
-        if(record[i].hash.compare(hToCheck[i].hash) == 0) {
-	    hToCheck[i].pass = record[i].pass;
-        }
-    }
+    int nPassCracked = performMainComputation(record, hToCheck, result, nLinesPFile, nLinesHFile);
 
-	writeFile(hToCheck, outputFile, nLinesHFile);
+    writeFile(result, outputFile, nPassCracked);
     
     return 0;
     
