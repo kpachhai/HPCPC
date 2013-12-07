@@ -5,8 +5,17 @@
 #include <cstdlib>
 #include <cstring>
 #include <ostream>
+#include <sys/time.h>
 
 using namespace std;
+
+double get_walltime() {
+    struct timeval time;
+    if(gettimeofday(&time, NULL)) {
+        return 0;
+    }
+    return (double)time.tv_sec + (double)time.tv_usec * 0.000001;
+}
 
 struct hashes
 {
@@ -101,13 +110,27 @@ int main(int argc, char ** argv) {
     hashes * hToCheck = new hashes[nLinesHFile];
     hashes * result = new hashes[nLinesHFile];
     
+    double startReadTime = get_walltime();   
     readPassFile(record, PFile);
     readHashFile(hToCheck, HFile);
+    double readTime = get_walltime() - startReadTime;
     
+ 
+    double startExecTime = get_walltime();
     int nPassCracked = performMainComputation(record, hToCheck, result, nLinesPFile, nLinesHFile);
+    double execTime = get_walltime() - startExecTime;
 
+    double startWriteTime = get_walltime();
     writeFile(result, outputFile, nPassCracked);
-    
+    double writeTime = get_walltime() - startWriteTime;
+ 
+    cout << endl;
+    cout << "Read time of the file with " << nLinesHFile << " lines = " << readTime << " seconds" << endl << endl;
+    cout << "Total passwords cracked = " << nPassCracked << endl;
+    cout << "Total execution time for the main computation = " << execTime << " seconds" << endl;
+    cout << endl;
+    cout << "Write time of the output file = " << writeTime << " seconds" << endl << endl;
+   
     return 0;
     
 }
