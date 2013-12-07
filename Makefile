@@ -30,6 +30,9 @@ mpi_brute_force:
 run_mpi_brute:
 	mpirun -np $(P) ./mpi_brute_force $(H) $(M)
 
+dic_attack_acc:
+	pgcpp -acc -fast -Minfo acc_dictionary_attack.cpp -o acc_dict
+	./acc_dict $(G) 16 $(GG) 16 $(I)
 dic_attack_basic:
 	$(GCC) -O3 -o $(B) dictionary_attack.cpp
 	./dictionary_attack $(G) 16 $(GG) 16 $(I)
@@ -50,7 +53,6 @@ convert:
 
 makehashes:
 	$(GCC) make_hashes_pass_files_for_test.cpp -o make_hashes -lcrypto -lssl
-	
 test:
 	python performance.py $(A) $(B) $(C) $(P)
 
