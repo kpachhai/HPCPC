@@ -71,7 +71,6 @@ void writeFile(hashes * hToCheck, char * fileName, int nLinesHFile) {
 }
 
 int main(int argc, char ** argv) {
-    string line;
     char * HFile = argv[1];
     int nLinesHFile = atoi(argv[2]);
     char * outputFile = argv[3];
