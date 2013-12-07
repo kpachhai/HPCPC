@@ -125,8 +125,8 @@ int main(int argc, char ** argv) {
     double writeTime = get_walltime() - startWriteTime;
  
     cout << endl;
-    cout << "Read time of the file with " << nLinesHFile << " lines = " << readTime << " seconds" << endl << endl;
-    cout << "Total passwords cracked = " << nPassCracked << endl;
+    cout << "Read time of the file with " << nLinesHFile << " pass hashes = " << readTime << " seconds" << endl << endl;
+    cout << "Total number of passwords cracked = " << nPassCracked << endl;
     cout << "Total execution time for the main computation = " << execTime << " seconds" << endl;
     cout << endl;
     cout << "Write time of the output file = " << writeTime << " seconds" << endl << endl;
