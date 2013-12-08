@@ -31,7 +31,7 @@ run_mpi_brute:
 	mpirun -np $(P) ./mpi_brute_force $(H) $(M)
 
 dic_attack_cuda:
-	nvcc -O3 -o cuda_dictionary_attack.cu -o cuda_dic
+	nvcc -O3 gpu_dictionary_attack.cu -o cuda_dic
 	./cuda_dic $(G) 16 $(GG) 16 $(I)
 
 dic_attack_acc:
