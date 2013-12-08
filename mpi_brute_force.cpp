@@ -5,11 +5,14 @@
 #include <math.h>
 #include "mpi.h"     /* For MPI functions, etc */ 
 #include "md5.h"
+#include <openssl/sha.h>
 
-#define HASH_LENGTH 32
+#define MD5_HASH_LENGTH 32
+#define SHA1_HASH_LENGTH 40
+#define SHA256_HASH_LENGTH 64
 
-void forceCrack(char* hash, int maxPassLength, int myRank, int numOfProcs); // Iterates through possibilities
-void checkPass(char* hash, char* string1, int myRank); // Compares two hashes
+void forceCrack(char* hash, int maxPassLength, int myRank, int numOfProcs, char* hashType); // Iterates through possibilities
+void checkPass(char* hash, char* string1, int myRank, char* type); // Compares two hashes
 
 MD5 md5; // Global variable 
 
@@ -19,6 +22,7 @@ int main(int argc, char **argv)
     int myRank;
 	int maxPassLength; // Will not check passwords longer than this
 	char hashFile[100];
+    char hashType[10];
 	
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numOfProcs);
@@ -38,16 +42,24 @@ int main(int argc, char **argv)
         MPI_Finalize();
 	    return -2;
     }
+    if (argc < 4)
+    {
+        if (myRank == 0)
+            printf("Please enter the type of hash in argv[3]. Possibilities are: SHA1, SHA256, MD5, BF\n");
+        MPI_Finalize();
+        return -4;
+    }
 
     sprintf(hashFile, "%s",argv[1]);
     maxPassLength = atoi(argv[2]);
-    forceCrack(hashFile, maxPassLength, myRank, numOfProcs); // This does the brute force
+    sprintf(hashType, "%s", argv[3]);
+    forceCrack(hashFile, maxPassLength, myRank, numOfProcs, hashType); // This does the brute force
 
 	MPI_Finalize();
 	return 0;
 }
 
-void forceCrack(char* hashFile, int maxPassLength, int myRank, int numOfProcs)
+void forceCrack(char* hashFile, int maxPassLength, int myRank, int numOfProcs, char* hashType)
 {
 	char alphanum[62+1];  							// Character set to check passwords of
     sprintf(alphanum, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
@@ -110,22 +122,43 @@ void forceCrack(char* hashFile, int maxPassLength, int myRank, int numOfProcs)
 				 str[j] = alphanum[spot[j]];
 			}
 		}
-		checkPass(hashFile, str, myRank);		// Checks the string
+		checkPass(hashFile, str, myRank, hashType);		// Checks the string
 		spot[0]++; 							// Increment least significant character
 	}
     printf("Processor %d found all matching hashes for words of length %d or less\n", myRank, maxPassLength);
 }
 
-void checkPass(char* hashFile, char* tempString, int myRank)
+void checkPass(char* hashFile, char* tempString, int myRank, char* type)
 {
-    char testHash[HASH_LENGTH+1];
 	int i;
 	bool foundPass = false;
-    sprintf(testHash, "%s", md5.digestString(tempString));
-    
+    char str[SHA256_HASH_LENGTH+1];
+    char testHash[SHA256_HASH_LENGTH+1];
+
+    if (strcmp(type, "MD5") == 0)
+    {
+        sprintf(testHash, "%s", md5.digestString(tempString));
+    }
+    else if (strcmp(type, "SHA1") == 0)
+    {
+        unsigned char binaryHash[SHA_DIGEST_LENGTH];
+        unsigned char* sha1String = (unsigned char*)tempString;
+
+        SHA1(sha1String, strlen(tempString), binaryHash);
+        for (i = 0; i < SHA_DIGEST_LENGTH; i++)
+            sprintf(testHash+2*i, "%02x", binaryHash[i]);
+    }
+    else if (strcmp(type, "SHA256") == 0)
+    {
+        unsigned char binaryHash[SHA256_DIGEST_LENGTH];
+        unsigned char* sha256String = (unsigned char*)tempString;
+
+        SHA256(sha256String, strlen(tempString), binaryHash);
+        for (i = 0; i < SHA256_DIGEST_LENGTH; i++)
+            sprintf(testHash+2*i, "%02x", binaryHash[i]);
+    }
 //    printf("Proc %d: %s\n", myRank, tempString); // Debugging info
 
-    char str [HASH_LENGTH+1];
     FILE* pFile;
     
     pFile = fopen (hashFile,"r");
@@ -137,19 +170,9 @@ void checkPass(char* hashFile, char* tempString, int myRank)
 
     while (fscanf (pFile, "%s", str) != EOF)
     {
-        for (i = 0; i < HASH_LENGTH; i++) {// Checks if the hashes match
-    		if (testHash[i] != str[i]) {
-    			foundPass = false;
-    			break;
-    		} else {
-    			foundPass = true;
-    		}
-    	}
-    	if (foundPass) {
-    		printf("Processor %d found the password: %s\n", myRank, tempString);
-//            MPI_Abort(MPI_COMM_WORLD, 14);
-//            MPI_Finalize();
-//    		exit(0);
+        foundPass = (strcmp(testHash, str) == 0);
+       	if (foundPass) {
+    		printf("%s, %s\n", tempString, testHash);
     	}
     }
     fclose (pFile);

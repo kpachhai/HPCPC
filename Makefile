@@ -18,17 +18,18 @@ K = passlist/convertedHashLeveldbGPU.txt
 P = 1
 H = passlist/hashFileToTest.txt
 M = 4
+T = MD5
 
 GCC = g++
 
 all: $(EXES)
-	$(GCC) -Wall -O3 -o $@ $^
+	$(GCC) -O3 -o $@ $^
 
 mpi_brute_force:
-	mpic++ mpi_brute_force.cpp -o $@
+	mpic++ mpi_brute_force.cpp -lcrypto -o $@
 
 run_mpi_brute:
-	mpirun -np $(P) ./mpi_brute_force $(H) $(M)
+	mpirun -np $(P) ./mpi_brute_force $(H) $(M) $(T)
 
 dic_attack_acc:
 	pgcpp -acc -fast -Minfo acc_dictionary_attack.cpp -o acc_dict
