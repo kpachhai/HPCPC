@@ -31,9 +31,14 @@ mpi_brute_force:
 run_mpi_brute:
 	mpirun -np $(P) ./mpi_brute_force $(H) $(M) $(T)
 
+dic_attack_cuda:
+	nvcc -O3 gpu_dictionary_attack.cu -o cuda_dic
+	./cuda_dic $(G) 16 $(GG) 16 $(I)
+
 dic_attack_acc:
 	pgcpp -acc -fast -Minfo acc_dictionary_attack.cpp -o acc_dict
 	./acc_dict $(G) 16 $(GG) 16 $(I)
+
 dic_attack_basic:
 	$(GCC) -O3 -o $(B) dictionary_attack.cpp
 	./dictionary_attack $(G) 16 $(GG) 16 $(I)

@@ -6,7 +6,6 @@
 #include <cstring>
 #include <ostream>
 #include <sys/time.h>
-#include <mpi.h>
 
 using namespace std;
 
@@ -75,20 +74,20 @@ void writeFile(hashes * result, char * fileName, int size) {
     fileToWriteTo.close();
 }
 
-int performMainComputation(hashes * record, hashes * hToCheck, hashes * result, int nLinesPFile, int nLinesHFile,int rank, int size) {
+int performMainComputation(hashes * record, hashes * hToCheck, hashes * result, int nLinesPFile, int nLinesHFile) {
     int i, j;
     int row = nLinesPFile;
-    int col = nLinesHFile/size;
-    
-    /* if(nLinesPFile < nLinesHFile) {
-        row = nLinesHFile; // divide by size
+    int col = nLinesHFile;
+
+    if(nLinesPFile < nLinesHFile) {
+	row = nLinesHFile;
 	col = nLinesPFile;
-	}*/
+    }
 
     int indexStruct = 0;
-    
-    for(i = 0; i < row ; i++) {
-      for(j = rank*col; j < col *(rank+1); j++) {
+
+    for(i = 0; i < row; i++) {
+        for(j = 0; j < col; j++) {
             if(record[i].hash.compare(hToCheck[j].hash) == 0) {
 		result[indexStruct].pass = record[i].pass;
 		result[indexStruct].hash = record[i].hash;
@@ -116,12 +115,6 @@ int main(int argc, char ** argv) {
     int nLinesHFile = atoi(argv[4]);
     char * outputFile = argv[5];
 
-    int numOfProcs;
-    int myRank;
-    MPI_Init(&argc, &argv);
-    MPI_Comm_size(MPI_COMM_WORLD, &numOfProcs);
-    MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
-
     hashes * record = new hashes[nLinesPFile];
     hashes * hToCheck = new hashes[nLinesHFile];
     hashes * result = new hashes[nLinesHFile];
@@ -132,23 +125,15 @@ int main(int argc, char ** argv) {
     double readTime = get_walltime() - startReadTime;
      
     double startExecTime = get_walltime();
-    int nPassCracked = performMainComputation(record, hToCheck, result, nLinesPFile, nLinesHFile, myRank, numOfProcs);
+    int nPassCracked = performMainComputation(record, hToCheck, result, nLinesPFile, nLinesHFile);
     double execTime = get_walltime() - startExecTime;
 
     double startWriteTime = get_walltime();
     writeFile(result, outputFile, nPassCracked);
     double writeTime = get_walltime() - startWriteTime;
-  
-    int totalPassCracked = 0;
-    double totalTime = 0;
-    MPI_Reduce(&nPassCracked,&totalPassCracked,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
-    MPI_Reduce(&execTime, &totalTime,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
-    cout << myRank << " "  << execTime << endl;
-    if(myRank == 0)
-	{
-   	 printBenchmark(nLinesHFile, readTime, totalPassCracked, totalTime, writeTime);
-	}
-    MPI_Finalize();
+ 
+    printBenchmark(nLinesHFile, readTime, nPassCracked, execTime, writeTime);
+   
     return 0;
     
 }
