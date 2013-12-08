@@ -78,17 +78,17 @@ void writeFile(hashes * result, char * fileName, int size) {
 int performMainComputation(hashes * record, hashes * hToCheck, hashes * result, int nLinesPFile, int nLinesHFile,int rank, int size) {
     int i, j;
     int row = nLinesPFile;
-    int col = nLinesHFile;
-
-    if(nLinesPFile < nLinesHFile) {
-	row = nLinesHFile/size;
-	col = nLinesPFile/size;
-    }
+    int col = nLinesHFile/size;
+    
+    /* if(nLinesPFile < nLinesHFile) {
+        row = nLinesHFile; // divide by size
+	col = nLinesPFile;
+	}*/
 
     int indexStruct = 0;
     
-    for(i = rank*row; i < row; i++) {
-        for(j = rank*col; j < col; j++) {
+    for(i = 0; i < row ; i++) {
+      for(j = rank*col; j < col *(rank+1); j++) {
             if(record[i].hash.compare(hToCheck[j].hash) == 0) {
 		result[indexStruct].pass = record[i].pass;
 		result[indexStruct].hash = record[i].hash;
@@ -139,11 +139,15 @@ int main(int argc, char ** argv) {
     writeFile(result, outputFile, nPassCracked);
     double writeTime = get_walltime() - startWriteTime;
   
+    int totalPassCracked = 0;
+    double totalTime = 0;
+    MPI_Reduce(&nPassCracked,&totalPassCracked,1,MPI_INT,MPI_SUM,0,MPI_COMM_WORLD);
+    MPI_Reduce(&execTime, &totalTime,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
+    cout << myRank << " "  << execTime << endl;
     if(myRank == 0)
 	{
-   	 printBenchmark(nLinesHFile, readTime, nPassCracked, execTime, writeTime);
+   	 printBenchmark(nLinesHFile, readTime, totalPassCracked, totalTime, writeTime);
 	}
-   
     MPI_Finalize();
     return 0;
     
