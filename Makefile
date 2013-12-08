@@ -1,4 +1,4 @@
-EXES = serial_brute_force
+EXES = serial_brute_force omp_brute_force cuda_brute_force
 F = passlist/simplewords.txt
 A = passlist/test.txt
 B = dictionary_attack
@@ -20,6 +20,14 @@ GCC = g++
 
 all: $(EXES)
 	$(GCC) -Wall -O3 -o $@ $^
+
+cuda_brute_force:
+	nvcc cuda_brute_force.cu  -arch=sm_20 -o $@
+	./cuda_brute_force $(H) $(M)
+
+omp_brute_force:
+	$(GCC) -openmp omp_brute_force.cpp -o $@
+	./omp_brute_force $(H) $(M)
 
 mpi_brute_force:
 	mpic++ mpi_brute_force.cpp -o $@
