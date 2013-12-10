@@ -6,8 +6,20 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <cstdlib>
+#include <stdio.h>
+#include <sys/time.h>
 
 using namespace std;
+
+double get_walltime() {
+    struct timeval time;
+    if(gettimeofday(&time, NULL)) {
+        return 0;
+    }
+    return (double)time.tv_sec + (double)time.tv_usec * 0.000001;
+}
+
 string sha256(const string str);
 
 int main(int argc, char** argv)
@@ -20,12 +32,14 @@ int main(int argc, char** argv)
         //Opens and reads the list of passwords
         ifstream myfile;
         ofstream outputFile;
-        string password;        
+        string password;  
+	double readTime;      
 
         myfile.open(fileName.c_str());
         outputFile.open(outputFileName);        
         if(myfile.is_open())
         {
+		double startReadTime = get_walltime();
                 while( getline(myfile,password) )
                 {        
                         outputFile << password << ",";
@@ -35,6 +49,7 @@ int main(int argc, char** argv)
  			
 			outputFile << shaString << endl;        
                 }
+		readTime = get_walltime() - startReadTime;
                 outputFile.close();
                 myfile.close();
         }
@@ -43,6 +58,8 @@ int main(int argc, char** argv)
         {
                 cout << "Unable to open file!" << endl;
         }
+
+	cout << "Sha1 dictionary created in: " << readTime << " seconds" << endl;
         
         return 0;
 }
