@@ -61,13 +61,21 @@ void writeFile(hashes * hToCheck, char * fileName, int nLinesHFile) {
     int i;
     ofstream  fileToWriteTo;
     fileToWriteTo.open(fileName);   
-    string compareString = "NOT FOUND";
     for(i = 0; i < nLinesHFile; i++) {
-    	if(hToCheck[i].pass.compare(compareString)) {
-    		fileToWriteTo << hToCheck[i].pass << ", " << hToCheck[i].hash << endl;
-    	}
+    	fileToWriteTo << hToCheck[i].pass << ", " << hToCheck[i].hash << endl;
     }
     fileToWriteTo.close();
+}
+
+void printBenchmark(int nLinesHFile, double readTime, int nPassCracked, double execTime, double writeTime) {
+    cout << endl;
+    cout << "Read time of the file with " << nLinesHFile << " pass hashes = " << readTime << " seconds" << endl << endl;
+    cout << "Total number of passwords cracked = " << nPassCracked << endl;
+    cout << "Total execution time for the main computation = " << execTime << " seconds" << endl;
+    cout << endl;
+    cout << "Write time of the output file = " << writeTime << " seconds" << endl << endl;
+
+    cout << "Total sequential time = " << readTime + execTime + writeTime << " seconds" << endl << endl;
 }
 
 int main(int argc, char ** argv) {
@@ -76,7 +84,8 @@ int main(int argc, char ** argv) {
     char * outputFile = argv[3];
     int i;
 
-    hashes hToCheck[nLinesHFile];
+    hashes * hToCheck = new hashes[nLinesHFile];
+    hashes * result = new hashes[nLinesHFile];
     string databaseDir = "./pass_dir";
 
     leveldb::DB *db;
@@ -93,32 +102,25 @@ int main(int argc, char ** argv) {
     double readTime = get_walltime() - startReadTime;
 
     string password;
+    int nPassCracked = 0;
     double startExecTime = get_walltime();
     for(i = 0; i < nLinesHFile; i++) {
 	s = db->Get(roptions, hToCheck[i].hash, &password);
 	if(s.ok()) {
-     	    hToCheck[i].pass = password;
+     	    result[nPassCracked].pass = password;
+	    result[nPassCracked].hash = hToCheck[i].hash;
+	    nPassCracked++;
 	}
     }
     double execTime = get_walltime() - startExecTime;
 
     double startWriteTime = get_walltime();
-    writeFile(hToCheck, outputFile, nLinesHFile);
+    writeFile(result, outputFile, nPassCracked);
     double writeTime = get_walltime() - startWriteTime;
 
     delete db;   
 
-    string outputFileName = argv[3];
-    string cmd = "cat " + outputFileName + " | wc -l";
-    char * cmdToExec = new char[cmd.length() + 1];
-    strcpy(cmdToExec, cmd.c_str());
-    string nPassCracked = execLinuxCommand(cmdToExec);
-   
-    cout << endl;
-    cout << "Read time of the file with " << nLinesHFile << " lines = " << readTime << " seconds" << endl << endl;
-    cout << nPassCracked << "passwords cracked and time for its execution = " << execTime << " seconds" << endl;
-    cout << endl;
-    cout << "Write time of the output file = " << writeTime << " seconds" << endl << endl;
+    printBenchmark(nLinesHFile, readTime, nPassCracked, execTime, writeTime);
 
     return 0;
 }

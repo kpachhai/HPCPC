@@ -51,11 +51,15 @@ int main(int argc, char ** argv) {
 
     leveldb::WriteOptions woptions;  
  
-    for(int i = 0; i < 26; i++) {
+/*    for(int i = 0; i < 26; i++) {
 	    char * filename = new char[fileNames[i].length() + 1];
 	    strcpy(filename, fileNames[i].c_str());
+*/
+	    string filename = path + "rockyou.txt";
+	    char * name = new char[filename.length() + 1];
+	    strcpy(name, filename.c_str());
 
-	    file.open(filename);
+	    file.open(name);
 	    
 	    while(getline(file, line)) {
 		string pass,hash;
@@ -69,7 +73,7 @@ int main(int argc, char ** argv) {
 	    }
 	    file.close();
 	    cout << "Completed loading passwords and hashes from " << filename << endl;
-    }
+ //   }
 
     int keyValuePairLength = 0;
     //Read the database
