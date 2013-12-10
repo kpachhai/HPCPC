@@ -3,9 +3,9 @@ Filename		Total size  Cracked  ReadTime  ExecTime  WriteTime  Total Time
 elitehacker.txt		895  	    774      8.397420  97.86730  0.0646690  106.329000
 hak5.txt		2351 	    558      8.553340  255.1140  0.0008280  263.668000
 singles.org.txt		12234       0        8.626770  1336.370  0.0003809  1345.00000
-english.txt		394748     
-facebook-firstnames.txt 4347667    
-rockyou.txt 		14344391    
+english.txt		394748       85732        8.345234  42782.74  0.1129453  42791.4837       
+facebook-firstnames.txt 4347667       714583        8.721334   471199.6  0.913456  471209.926      
+rockyou.txt 		14344391       14319807        8.342356  1554643  18.34539  1554670            
 
 SERIAL VERSION WITH LEVELDB:
 Filename		Total size  Cracked  ReadTime  ExecTime  WriteTime  Total Time 	
