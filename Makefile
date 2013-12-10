@@ -32,14 +32,14 @@ run_mpi_brute:
 
 dic_attack_basic:
 	$(GCC) -O3 -o $(B) dictionary_attack.cpp
-	./dictionary_attack $(G) 16 $(GG) 16 $(I)
+#	./dictionary_attack $(G) 16 $(GG) 16 $(I)
 
 dic_attack_create_db:
 	$(GCC) -O3 -o $(D) d-a-leveldb-create-db.cpp leveldb/libleveldb.a -lpthread -I leveldb/include
 
 dic_attack_db_exec:
 	$(GCC) -O3 -o $(E) d-a-leveldb.cpp leveldb/libleveldb.a -lpthread -I leveldb/include
-	./d-a-leveldb $(J) 394748 $(II)
+#	./d-a-leveldb $(J) 394748 $(II)
 
 dic_attack_db_exec_gpu:
 	nvcc -O3 -o dic_attack_gpu d-a-leveldb-cuda.cu leveldb/libleveldb.a -lpthread -I leveldb/include
