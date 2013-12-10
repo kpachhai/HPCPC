@@ -106,6 +106,8 @@ void printBenchmark(int nLinesHFile, double readTime, int nPassCracked, double e
     cout << "Total execution time for the main computation = " << execTime << " seconds" << endl;
     cout << endl;
     cout << "Write time of the output file = " << writeTime << " seconds" << endl << endl;
+
+    cout << "Total sequential time = " << readTime + execTime + writeTime << " seconds" << endl << endl;
 }
 
 int main(int argc, char ** argv) {
