@@ -1,4 +1,4 @@
-// Compile: g++ convert_sha256_txt.cpp -o convert -lcrypto -lssl
+// Compile: g++ convert_sha1_txt.cpp -o convert -lcrypto -lssl
 // Run: ./convert <dictionary file> ie ./convert passlist/hugepasslist.txt
 #include <iostream>
 #include <fstream>
