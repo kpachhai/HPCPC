@@ -19,6 +19,7 @@ P = 1
 H = passlist/hashFileToTest.txt
 M = 4
 T = MD5
+O = bruteForceOutputFile.txt
 
 GCC = g++
 
@@ -37,7 +38,7 @@ mpi_brute_force:
 	mpic++ mpi_brute_force.cpp -lcrypto -o $@
 
 run_mpi_brute:
-	mpirun -np $(P) ./mpi_brute_force $(H) $(M) $(T)
+	mpirun -np $(P) ./mpi_brute_force $(H) $(M) $(T) $(O)
 
 dic_attack_cuda:
 	nvcc -O3 gpu_dictionary_attack.cu -o cuda_dic

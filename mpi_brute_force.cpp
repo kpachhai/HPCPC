@@ -30,6 +30,7 @@ int main(int argc, char **argv)
     int myRank;
 	int maxPassLength; // Will not check passwords longer than this
 	char hashFile[100];
+    char outputFile[100];
     char hashType[10];
     double maxEndTime, maxStartTime;
 	
@@ -61,17 +62,33 @@ int main(int argc, char **argv)
         MPI_Finalize();
         return -4;
     }
+    if (argc < 5)
+    {
+        if (myRank == 0)
+            printf("Enter the output file name into argv[4].\n");
+        MPI_Finalize();
+        return -5;
+    }
 
     sprintf(hashFile, "%s",argv[1]);
     maxPassLength = atoi(argv[2]);
     sprintf(hashType, "%s", argv[3]);
+    sprintf(outputFile, "%s", argv[4]);
     forceCrack(hashFile, maxPassLength, myRank, numOfProcs, hashType); // This does the brute force
 
     double endTime = millisec()/1e6;
     MPI_Reduce(&endTime, &maxEndTime, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
-    if (myRank == 0)
-        printf("Total time: %f\n", maxEndTime - maxStartTime);
+    if (myRank == 0) {
+        FILE* oFile;
+        oFile = fopen (outputFile,"w");
+        fprintf(oFile, "Processors: %i\n", numOfProcs);
+        fprintf(oFile, "File checked against: %s\n", hashFile);
+        fprintf(oFile, "Hashing algorithm: %s\n", hashType);
+        fprintf(oFile, "Max pass length: %i\n", maxPassLength);
+        fprintf(oFile, "Total time: %f\n", maxEndTime - maxStartTime);
+        fclose(oFile);
+    }
 
 	MPI_Finalize();
 	return 0;
