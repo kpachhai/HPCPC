@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
@@ -16,6 +17,13 @@ void checkPass(char* hash, char* string1, int myRank, char* type); // Compares t
 
 MD5 md5; // Global variable 
 
+double millisec()
+{
+    struct timeval tp;
+    gettimeofday(&tp, NULL);
+    return (double)(tp.tv_sec*1e6 + tp.tv_usec);
+}
+
 int main(int argc, char **argv)
 {
     int numOfProcs;
@@ -23,10 +31,14 @@ int main(int argc, char **argv)
 	int maxPassLength; // Will not check passwords longer than this
 	char hashFile[100];
     char hashType[10];
+    double maxEndTime, maxStartTime;
 	
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numOfProcs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+
+    double startTime = millisec()/1e6;
+    MPI_Reduce(&startTime, &maxStartTime, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
     if (argc < 2)
     {
@@ -54,6 +66,12 @@ int main(int argc, char **argv)
     maxPassLength = atoi(argv[2]);
     sprintf(hashType, "%s", argv[3]);
     forceCrack(hashFile, maxPassLength, myRank, numOfProcs, hashType); // This does the brute force
+
+    double endTime = millisec()/1e6;
+    MPI_Reduce(&endTime, &maxEndTime, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+
+    if (myRank == 0)
+        printf("Total time: %f\n", maxEndTime - maxStartTime);
 
 	MPI_Finalize();
 	return 0;
