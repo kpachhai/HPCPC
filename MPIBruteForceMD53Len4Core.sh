@@ -4,7 +4,7 @@
 #PBS -N MPIBruteForceMD53Len4Core
 
 # Set a walltime for the job. The time format is HH:MM:SS
-#PBS -l walltime=00:45:00
+#PBS -l walltime=00:30:00
 
 # Set number of nodes
 #PBS -l nodes=1:ppn=4

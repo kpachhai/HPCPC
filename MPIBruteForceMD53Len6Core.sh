@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Set the name of the job
-#PBS -N MPIBruteForceMD53Len6Core
+#PBS -N MPIBruteForceMD53Len1Core
 
 # Set a walltime for the job. The time format is HH:MM:SS
-#PBS -l walltime=00:20:00
+#PBS -l walltime=00:15:00
 
 # Set number of nodes
 #PBS -l nodes=1:ppn=6
