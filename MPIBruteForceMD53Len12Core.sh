@@ -20,4 +20,4 @@ module load openmpi/openmpi-1.6.4_gcc-4.7.2_torque-4.2.3_ib
 
 cd $PBS_O_WORKDIR
 make mpi_brute_force
-make run_mpi_brute P=12 H=passlist/myspace_MD5.txt M=3 T=MD5 O=MPIBruteForceMD53Len12Core.txt
+make run_mpi_brute P=12 H=passlist/myspace_md5.txt M=3 T=MD5 O=MPIBruteForceMD53Len12Core.txt
